@@ -1,0 +1,60 @@
+{
+  "formatVersion": "1.1",
+  "component": {
+    "group": "com.mrmodder",
+    "module": "YetAnotherModLibrary",
+    "version": "0.1",
+    "attributes": {
+      "org.gradle.status": "release"
+    }
+  },
+  "createdBy": {
+    "gradle": {
+      "version": "8.8"
+    }
+  },
+  "variants": [
+    {
+      "name": "apiElements",
+      "attributes": {
+        "org.gradle.category": "library",
+        "org.gradle.dependency.bundling": "external",
+        "org.gradle.jvm.version": 21,
+        "org.gradle.libraryelements": "jar",
+        "org.gradle.usage": "java-api"
+      },
+      "files": [
+        {
+          "name": "YetAnotherModLibrary-0.1.jar",
+          "url": "YetAnotherModLibrary-0.1.jar",
+          "size": 20141,
+          "sha512": "461d6a522f1190ae398b9954beadbce9ee619207fef64099e167124a433a4ac1a48847721ae1ae757df5db3cbd908178b855fcad69a245f80833515ea2fc4432",
+          "sha256": "a6fd288640a4c289d87fbd455dcaf1896f920c038af89e10456d18e6f3a05745",
+          "sha1": "02f9eb7c13dd96b0383132d2904db3c27685d5a7",
+          "md5": "d0ca78d99a622427a3ccd0840988a038"
+        }
+      ]
+    },
+    {
+      "name": "runtimeElements",
+      "attributes": {
+        "org.gradle.category": "library",
+        "org.gradle.dependency.bundling": "external",
+        "org.gradle.jvm.version": 21,
+        "org.gradle.libraryelements": "jar",
+        "org.gradle.usage": "java-runtime"
+      },
+      "files": [
+        {
+          "name": "YetAnotherModLibrary-0.1.jar",
+          "url": "YetAnotherModLibrary-0.1.jar",
+          "size": 20141,
+          "sha512": "461d6a522f1190ae398b9954beadbce9ee619207fef64099e167124a433a4ac1a48847721ae1ae757df5db3cbd908178b855fcad69a245f80833515ea2fc4432",
+          "sha256": "a6fd288640a4c289d87fbd455dcaf1896f920c038af89e10456d18e6f3a05745",
+          "sha1": "02f9eb7c13dd96b0383132d2904db3c27685d5a7",
+          "md5": "d0ca78d99a622427a3ccd0840988a038"
+        }
+      ]
+    }
+  ]
+}
