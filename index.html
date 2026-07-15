@@ -11,7 +11,37 @@
       padding: 0 20px;
       line-height: 1.6;
       color: #222;
+      background: #fff;
+      transition: background .2s, color .2s;
     }
+
+    /* Dark mode */
+    body.dark {
+      background: #111;
+      color: #ddd;
+    }
+    body.dark pre {
+      background: #222;
+      color: #eee;
+    }
+    body.dark input {
+      background: #222;
+      color: #eee;
+      border-color: #444;
+    }
+    body.dark .folder {
+      color: #eee;
+    }
+    body.dark a {
+      color: #66aaff;
+    }
+    body.dark button {
+      background: #3399ff;
+    }
+    body.dark button:hover {
+      background: #1a7fe0;
+    }
+
     h1 {
       font-weight: 600;
       margin-bottom: 10px;
@@ -66,6 +96,13 @@
   </style>
 </head>
 <body>
+
+  <button id="themeToggle" style="float:right; margin-bottom:20px;">
+    Dark mode
+  </button>
+
+  <div id="readme"></div>
+
   <h1>A.G.O.M Maven Repository</h1>
   <p>Browse all mods below. Click a version to get the Gradle dependency.</p>
 
@@ -73,7 +110,17 @@
 
   <div id="repo"></div>
 
+  <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
+
   <script>
+    // Load README.md
+    async function loadReadme() {
+      const res = await fetch("https://raw.githubusercontent.com/A-group-of-modders/A.G.O.M-Maven/main/README.md");
+      const text = await res.text();
+      document.getElementById("readme").innerHTML = marked.parse(text);
+    }
+    loadReadme();
+
     async function fetchDir(path) {
       const api = `https://api.github.com/repos/A-group-of-modders/A.G.O.M-Maven/contents/${path}`;
       const res = await fetch(api);
@@ -100,7 +147,6 @@
     function createGradleSnippet(group, artifact, version) {
       const container = document.createElement("div");
 
-      const pre = document.createElement("pre");
       const snippet =
 `repositories {
     maven {
@@ -112,6 +158,8 @@
 dependencies {
     implementation "${group}:${artifact}:${version}"
 }`;
+
+      const pre = document.createElement("pre");
       pre.textContent = snippet;
 
       const button = document.createElement("button");
@@ -131,7 +179,6 @@ dependencies {
       const items = await fetchDir(path);
       const dirs = items.filter(i => i.type === "dir");
 
-      // Sort versions numerically
       dirs.sort((a, b) => a.name.localeCompare(b.name, undefined, { numeric: true }));
 
       for (let i = 0; i < dirs.length; i++) {
@@ -139,7 +186,6 @@ dependencies {
         const folder = createFolder(dir.name);
         const nested = createNested();
 
-        // Add "latest" badge to newest version
         if (depth === 2 && i === dirs.length - 1) {
           const badge = document.createElement("span");
           badge.className = "badge";
@@ -152,9 +198,9 @@ dependencies {
 
         if (depth === 2) {
           nested.appendChild(createGradleSnippet(
-            path.split("/")[0],      // group
-            path.split("/")[1],      // artifact
-            dir.name                 // version
+            path.split("/")[0],
+            path.split("/")[1],
+            dir.name
           ));
         } else {
           await buildTree(path + "/" + dir.name, nested, depth + 1);
@@ -175,6 +221,15 @@ dependencies {
         if (!match) nested.style.display = "none";
       });
     });
+
+    // Dark mode toggle
+    const toggle = document.getElementById("themeToggle");
+    toggle.onclick = () => {
+      document.body.classList.toggle("dark");
+      toggle.textContent = document.body.classList.contains("dark")
+        ? "Light mode"
+        : "Dark mode";
+    };
   </script>
 </body>
 </html>
