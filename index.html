@@ -1,0 +1,180 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="UTF-8">
+  <title>A.G.O.M Maven Repository</title>
+  <style>
+    body {
+      font-family: system-ui, sans-serif;
+      max-width: 700px;
+      margin: 40px auto;
+      padding: 0 20px;
+      line-height: 1.6;
+      color: #222;
+    }
+    h1 {
+      font-weight: 600;
+      margin-bottom: 10px;
+    }
+    input {
+      width: 100%;
+      padding: 8px;
+      margin: 20px 0;
+      font-size: 16px;
+      border: 1px solid #ccc;
+      border-radius: 6px;
+    }
+    .folder {
+      cursor: pointer;
+      font-weight: 500;
+      margin: 6px 0;
+    }
+    .nested {
+      margin-left: 16px;
+      display: none;
+    }
+    .active {
+      display: block;
+    }
+    .badge {
+      background: #e0e0e0;
+      padding: 2px 6px;
+      border-radius: 4px;
+      font-size: 12px;
+      margin-left: 6px;
+    }
+    pre {
+      background: #f5f5f5;
+      padding: 12px;
+      border-radius: 6px;
+      overflow-x: auto;
+      margin-top: 10px;
+    }
+    button {
+      margin-top: 6px;
+      padding: 6px 10px;
+      font-size: 14px;
+      border: none;
+      background: #0066cc;
+      color: white;
+      border-radius: 4px;
+      cursor: pointer;
+    }
+    button:hover {
+      background: #0055aa;
+    }
+  </style>
+</head>
+<body>
+  <h1>A.G.O.M Maven Repository</h1>
+  <p>Browse all mods below. Click a version to get the Gradle dependency.</p>
+
+  <input id="search" type="text" placeholder="Search mods…">
+
+  <div id="repo"></div>
+
+  <script>
+    async function fetchDir(path) {
+      const api = `https://api.github.com/repos/A-group-of-modders/A.G.O.M-Maven/contents/${path}`;
+      const res = await fetch(api);
+      return res.json();
+    }
+
+    function createFolder(name) {
+      const div = document.createElement("div");
+      div.className = "folder";
+      div.textContent = name;
+      div.onclick = () => {
+        const next = div.nextElementSibling;
+        next.classList.toggle("active");
+      };
+      return div;
+    }
+
+    function createNested() {
+      const div = document.createElement("div");
+      div.className = "nested";
+      return div;
+    }
+
+    function createGradleSnippet(group, artifact, version) {
+      const container = document.createElement("div");
+
+      const pre = document.createElement("pre");
+      const snippet =
+`repositories {
+    maven {
+        url = uri("https://a-group-of-modders.github.io/A.G.O.M-Maven")
+    }
+    mavenCentral()
+}
+
+dependencies {
+    implementation "${group}:${artifact}:${version}"
+}`;
+      pre.textContent = snippet;
+
+      const button = document.createElement("button");
+      button.textContent = "Copy to clipboard";
+      button.onclick = () => {
+        navigator.clipboard.writeText(snippet);
+        button.textContent = "Copied!";
+        setTimeout(() => button.textContent = "Copy to clipboard", 1500);
+      };
+
+      container.appendChild(pre);
+      container.appendChild(button);
+      return container;
+    }
+
+    async function buildTree(path, container, depth = 0) {
+      const items = await fetchDir(path);
+      const dirs = items.filter(i => i.type === "dir");
+
+      // Sort versions numerically
+      dirs.sort((a, b) => a.name.localeCompare(b.name, undefined, { numeric: true }));
+
+      for (let i = 0; i < dirs.length; i++) {
+        const dir = dirs[i];
+        const folder = createFolder(dir.name);
+        const nested = createNested();
+
+        // Add "latest" badge to newest version
+        if (depth === 2 && i === dirs.length - 1) {
+          const badge = document.createElement("span");
+          badge.className = "badge";
+          badge.textContent = "latest";
+          folder.appendChild(badge);
+        }
+
+        container.appendChild(folder);
+        container.appendChild(nested);
+
+        if (depth === 2) {
+          nested.appendChild(createGradleSnippet(
+            path.split("/")[0],      // group
+            path.split("/")[1],      // artifact
+            dir.name                 // version
+          ));
+        } else {
+          await buildTree(path + "/" + dir.name, nested, depth + 1);
+        }
+      }
+    }
+
+    buildTree("", document.getElementById("repo"));
+
+    document.getElementById("search").addEventListener("input", function() {
+      const term = this.value.toLowerCase();
+      const folders = document.querySelectorAll(".folder");
+
+      folders.forEach(f => {
+        const match = f.textContent.toLowerCase().includes(term);
+        f.style.display = match ? "" : "none";
+        const nested = f.nextElementSibling;
+        if (!match) nested.style.display = "none";
+      });
+    });
+  </script>
+</body>
+</html>
