@@ -28,5 +28,4 @@ repositories {
 dependencies {
     implementation "com.mrmodder:YetAnotherModLibrary:{version}"
 }
-
-
+```
