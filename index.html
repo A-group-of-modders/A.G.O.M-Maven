@@ -1,235 +1,626 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
   <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>A.G.O.M Maven Repository</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=Cascadia+Code:wght@400;500;600;700&display=swap" rel="stylesheet">
   <style>
-    body {
-      font-family: system-ui, sans-serif;
-      max-width: 700px;
-      margin: 40px auto;
-      padding: 0 20px;
-      line-height: 1.6;
-      color: #222;
-      background: #fff;
-      transition: background .2s, color .2s;
+    :root {
+      --bg: #F3F3F3;
+      --bg-elevated: #FFFFFF;
+      --bg-inset: #F7F7F7;
+      --ink: #1A1B1E;
+      --ink-soft: #6B6E74;
+      --line: #E1E1E1;
+      --accent: #3B6E4E;
+      --accent-soft: rgba(59, 110, 78, 0.10);
+      --shadow: 0 1px 2px rgba(20, 20, 20, 0.06), 0 8px 24px rgba(20, 20, 20, 0.05);
+      --folder: #E8A33D;
+      /* Code snippets — Windows Terminal / VS Code's own font */
+      --mono: 'Cascadia Code', ui-monospace, Consolas, monospace;
+      /* Everything else — real Segoe UI on Windows, sane fallbacks off it */
+      --sans: 'Segoe UI Variable Text', 'Segoe UI', Inter, system-ui, sans-serif;
+      --radius: 8px;
     }
 
-    /* Dark mode */
     body.dark {
-      background: #111;
-      color: #ddd;
-    }
-    body.dark pre {
-      background: #222;
-      color: #eee;
-    }
-    body.dark input {
-      background: #222;
-      color: #eee;
-      border-color: #444;
-    }
-    body.dark .folder {
-      color: #eee;
-    }
-    body.dark a {
-      color: #66aaff;
-    }
-    body.dark button {
-      background: #3399ff;
-    }
-    body.dark button:hover {
-      background: #1a7fe0;
+      --bg: #1B1B1B;
+      --bg-elevated: #202020;
+      --bg-inset: #2B2B2B;
+      --ink: #E7E8EA;
+      --ink-soft: #9A9A9A;
+      --line: #383838;
+      --accent: #6FA97D;
+      --accent-soft: rgba(111, 169, 125, 0.13);
+      --shadow: 0 1px 2px rgba(0, 0, 0, 0.3);
+      --folder: #F0B94D;
     }
 
-    h1 {
-      font-weight: 600;
-      margin-bottom: 10px;
+    * { box-sizing: border-box; }
+
+    body {
+      margin: 0;
+      padding: 56px 20px 90px;
+      background: var(--bg);
+      color: var(--ink);
+      font-family: var(--sans);
+      transition: background .2s ease, color .2s ease;
     }
-    input {
-      width: 100%;
-      padding: 8px;
-      margin: 20px 0;
-      font-size: 16px;
-      border: 1px solid #ccc;
-      border-radius: 6px;
+
+    .container { max-width: 740px; margin: 0 auto; }
+
+    .sr-only {
+      position: absolute; width: 1px; height: 1px;
+      padding: 0; margin: -1px; overflow: hidden;
+      clip: rect(0,0,0,0); white-space: nowrap; border: 0;
     }
-    .folder {
+
+    /* Header */
+    .page-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-start;
+      margin-bottom: 28px;
+      gap: 16px;
+    }
+    .page-header h1 {
+      font-family: var(--mono);
+      font-size: 26px;
+      font-weight: 700;
+      letter-spacing: -0.02em;
+      margin: 0;
+    }
+    .page-header p {
+      font-family: var(--sans);
+      color: var(--ink-soft);
+      font-size: 14.5px;
+      margin: 6px 0 0;
+    }
+
+    .theme-btn {
+      flex: none;
+      width: 38px;
+      height: 38px;
+      border-radius: 8px;
+      border: 1px solid var(--line);
+      background: var(--bg-elevated);
+      color: var(--ink-soft);
+      display: flex;
+      align-items: center;
+      justify-content: center;
       cursor: pointer;
-      font-weight: 500;
-      margin: 6px 0;
     }
-    .nested {
-      margin-left: 16px;
-      display: none;
+    .theme-btn:hover { border-color: var(--accent); color: var(--accent); }
+    .theme-btn svg { width: 18px; height: 18px; }
+    .theme-btn .moon { display: none; }
+    body.dark .theme-btn .sun { display: none; }
+    body.dark .theme-btn .moon { display: block; }
+
+    /* About / README card */
+    .about {
+      background: var(--bg-elevated);
+      border: 1px solid var(--line);
+      border-radius: var(--radius);
+      box-shadow: var(--shadow);
+      padding: 22px 26px;
+      margin-bottom: 24px;
+      line-height: 1.65;
+      font-size: 14.5px;
     }
-    .active {
-      display: block;
+    .about h1, .about h2, .about h3 { font-family: var(--mono); font-size: 15px; margin: 0 0 10px; }
+    .about p { margin: 0 0 10px; }
+    .about p:last-child { margin-bottom: 0; }
+    .about a { color: var(--accent); }
+    .about code { font-family: var(--mono); background: var(--bg-inset); padding: 1px 5px; border-radius: 4px; font-size: 13px; }
+    .about pre { background: var(--bg-inset); padding: 12px; border-radius: 6px; overflow-x: auto; }
+
+    /* Explorer window card */
+    .explorer {
+      background: var(--bg-elevated);
+      border: 1px solid var(--line);
+      border-radius: var(--radius);
+      box-shadow: var(--shadow);
+      overflow: hidden;
     }
-    .badge {
-      background: #e0e0e0;
-      padding: 2px 6px;
-      border-radius: 4px;
-      font-size: 12px;
-      margin-left: 6px;
+
+    /* Title bar: icon + title left, min/max/close right, flush to the edges */
+    .explorer-titlebar {
+      display: flex;
+      align-items: center;
+      height: 34px;
+      padding-left: 12px;
+      background: var(--bg-elevated);
+      border-bottom: 1px solid var(--line);
     }
-    pre {
-      background: #f5f5f5;
-      padding: 12px;
-      border-radius: 6px;
-      overflow-x: auto;
-      margin-top: 10px;
+    .explorer-titlebar .title-icon { color: var(--folder); flex: none; display: flex; }
+    .explorer-titlebar .title-icon svg { width: 15px; height: 15px; }
+    .explorer-title {
+      margin-left: 8px;
+      font-family: var(--sans);
+      font-size: 12.5px;
+      color: var(--ink-soft);
     }
-    button {
-      margin-top: 6px;
-      padding: 6px 10px;
-      font-size: 14px;
+    .win-controls { display: flex; margin-left: auto; align-self: stretch; }
+    .win-btn {
+      width: 42px;
       border: none;
-      background: #0066cc;
-      color: white;
+      background: transparent;
+      color: var(--ink-soft);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      cursor: default;
+    }
+    .win-btn svg { width: 10px; height: 10px; }
+    .win-btn:hover { background: var(--bg-inset); }
+    .win-btn.close:hover { background: #E81123; color: #fff; }
+
+    /* Toolbar: back/forward, search box */
+    .explorer-toolbar {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      padding: 8px 12px;
+      background: var(--bg-elevated);
+      border-bottom: 1px solid var(--line);
+    }
+    .nav-btn {
+      width: 26px;
+      height: 26px;
+      flex: none;
+      border: none;
+      border-radius: 5px;
+      background: transparent;
+      color: var(--ink-soft);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      cursor: default;
+    }
+    .nav-btn svg { width: 14px; height: 14px; }
+    .nav-btn:hover { background: var(--bg-inset); }
+
+    .search-box {
+      flex: none;
+      margin-left: auto;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      width: 220px;
+      background: var(--bg-inset);
+      border: 1px solid var(--line);
+      border-radius: 4px;
+      padding: 6px 10px;
+    }
+    .search-box svg { width: 13px; height: 13px; color: var(--ink-soft); flex: none; }
+    .search-box input {
+      flex: 1;
+      min-width: 0;
+      border: none;
+      outline: none;
+      background: transparent;
+      font-family: var(--sans);
+      font-size: 12.5px;
+      color: var(--ink);
+    }
+    .search-box input::placeholder { color: var(--ink-soft); }
+    .search-box:focus-within { border-color: var(--accent); }
+
+    .explorer-body {
+      padding: 14px 16px 18px;
+      font-family: var(--sans);
+      font-size: 13.5px;
+    }
+
+    .loading { color: var(--ink-soft); font-size: 13px; }
+
+    /* Tree */
+    .tree-row {
+      display: flex;
+      align-items: center;
+      gap: 7px;
+      padding: 4px 8px;
       border-radius: 4px;
       cursor: pointer;
     }
-    button:hover {
-      background: #0055aa;
+    .tree-row:hover { background: var(--accent-soft); }
+    .tree-row:focus-visible { outline: 2px solid var(--accent); outline-offset: -1px; }
+
+    .chevron {
+      display: inline-flex;
+      flex: none;
+      width: 10px;
+      font-size: 9px;
+      color: var(--ink-soft);
+      transition: transform .15s ease;
+    }
+    .tree-row.open .chevron { transform: rotate(90deg); }
+
+    .folder-icon { flex: none; display: flex; color: var(--folder); }
+    .folder-icon svg { width: 16px; height: 13px; }
+
+    .tree-label { color: var(--ink); }
+
+    .badge {
+      margin-left: 4px;
+      font-size: 10px;
+      font-weight: 600;
+      letter-spacing: .02em;
+      padding: 1px 7px;
+      border-radius: 99px;
+      background: var(--accent-soft);
+      color: var(--accent);
+    }
+
+    .tree-children {
+      display: none;
+      margin-left: 12px;
+      padding-left: 10px;
+      border-left: 1px dotted var(--line);
+    }
+    .tree-children.active { display: block; }
+
+    /* Gradle snippet */
+    .snippet-wrap { margin: 6px 0 10px; }
+    .snippet-tabs { display: flex; gap: 3px; }
+    .snippet-tab {
+      font-family: var(--mono);
+      font-size: 11px;
+      color: var(--ink-soft);
+      background: var(--bg-inset);
+      border: 1px solid var(--line);
+      border-bottom: none;
+      padding: 4px 12px;
+      border-radius: 5px 5px 0 0;
+      cursor: pointer;
+    }
+    .snippet-tab:hover { color: var(--ink); }
+    .snippet-tab.active {
+      color: var(--ink);
+      font-weight: 600;
+      background: var(--bg-elevated);
+      position: relative;
+      top: 1px;
+    }
+    .snippet-tab:focus-visible { outline: 2px solid var(--accent); outline-offset: 1px; }
+    pre.snippet {
+      margin: 0 0 8px;
+      background: var(--bg-inset);
+      border: 1px solid var(--line);
+      border-radius: 0 6px 6px 6px;
+      padding: 12px 14px;
+      overflow-x: auto;
+      font-size: 12.5px;
+      line-height: 1.55;
+      color: var(--ink);
+    }
+    .copy-btn {
+      font-family: var(--mono);
+      font-size: 11px;
+      border: 1px solid var(--line);
+      background: transparent;
+      color: var(--ink-soft);
+      padding: 4px 11px;
+      border-radius: 5px;
+      cursor: pointer;
+    }
+    .copy-btn:hover { border-color: var(--accent); color: var(--accent); }
+    .copy-btn:focus-visible { outline: 2px solid var(--accent); outline-offset: 1px; }
+
+    @media (max-width: 480px) {
+      body { padding: 36px 14px 70px; }
+      .page-header { flex-direction: column; }
+      .search-box { width: 100%; }
+      .explorer-body { padding: 12px; font-size: 12.5px; }
+      .about { padding: 18px 20px; }
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+      * { transition: none !important; }
     }
   </style>
 </head>
 <body>
 
-  <button id="themeToggle" style="float:right; margin-bottom:20px;">
-    Dark mode
-  </button>
+<div class="container">
 
-  <div id="readme"></div>
+  <div class="page-header">
+    <div>
+      <h1>A.G.O.M</h1>
+      <p>Shared Maven repository — NeoForge mod artifacts for the group.</p>
+    </div>
+    <button class="theme-btn" id="themeToggle" aria-label="Toggle dark mode">
+      <svg class="sun" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="12" cy="12" r="4"/><path d="M12 2v2M12 20v2M4.9 4.9l1.4 1.4M17.7 17.7l1.4 1.4M2 12h2M20 12h2M4.9 19.1l1.4-1.4M17.7 6.3l1.4-1.4"/></svg>
+      <svg class="moon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12.8A9 9 0 1 1 11.2 3 7 7 0 0 0 21 12.8z"/></svg>
+    </button>
+  </div>
 
-  <h1>A.G.O.M Maven Repository</h1>
-  <p>Browse all mods below. Click a version to get the Gradle dependency.</p>
+  <div class="about" id="about">
+    <div id="about-body">Loading README…</div>
+  </div>
 
-  <input id="search" type="text" placeholder="Search mods…">
+  <div class="explorer">
+    <div class="explorer-titlebar">
+        <span class="title-icon">
+          <svg viewBox="0 0 20 16" fill="currentColor"><path d="M1.5 3.2c0-1 .8-1.7 1.7-1.7h3.6c.4 0 .8.2 1 .5l1 1.3h8c1 0 1.7.8 1.7 1.7v8.3c0 1-.8 1.7-1.7 1.7H3.2c-1 0-1.7-.8-1.7-1.7V3.2z"/></svg>
+        </span>
+      <span class="explorer-title">A.G.O.M-Maven</span>
+      <div class="win-controls">
+        <button class="win-btn" aria-hidden="true" tabindex="-1">
+          <svg viewBox="0 0 10 10"><line x1="0" y1="5" x2="10" y2="5" stroke="currentColor" stroke-width="1"/></svg>
+        </button>
+        <button class="win-btn" aria-hidden="true" tabindex="-1">
+          <svg viewBox="0 0 10 10"><rect x="0.5" y="0.5" width="9" height="9" fill="none" stroke="currentColor" stroke-width="1"/></svg>
+        </button>
+        <button class="win-btn close" aria-hidden="true" tabindex="-1">
+          <svg viewBox="0 0 10 10"><line x1="0" y1="0" x2="10" y2="10" stroke="currentColor" stroke-width="1"/><line x1="10" y1="0" x2="0" y2="10" stroke="currentColor" stroke-width="1"/></svg>
+        </button>
+      </div>
+    </div>
 
-  <div id="repo"></div>
+    <div class="explorer-toolbar">
+      <button class="nav-btn" aria-hidden="true" tabindex="-1">
+        <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M10 3 5 8l5 5"/></svg>
+      </button>
+      <button class="nav-btn" aria-hidden="true" tabindex="-1">
+        <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M6 3l5 5-5 5"/></svg>
+      </button>
+      <div class="search-box">
+        <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.6"><circle cx="7" cy="7" r="4.5"/><line x1="10.3" y1="10.3" x2="14" y2="14"/></svg>
+        <label for="search" class="sr-only">Search mods</label>
+        <input id="search" type="text" placeholder="Search A.G.O.M-Maven" autocomplete="off">
+      </div>
+    </div>
 
-  <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
+    <div class="explorer-body">
+      <div id="repo">
+        <div class="loading" id="loading">Reading repository tree…</div>
+      </div>
+    </div>
+  </div>
 
-  <script>
-    // Load README.md
-    async function loadReadme() {
-      const res = await fetch("https://raw.githubusercontent.com/A-group-of-modders/A.G.O.M-Maven/main/README.md");
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
+<script>
+  const REPO = "A-group-of-modders/A.G.O.M-Maven";
+  const GH_PAGES_URL = "https://a-group-of-modders.github.io/A.G.O.M-Maven";
+
+  async function loadReadme() {
+    const body = document.getElementById("about-body");
+    try {
+      const res = await fetch(`https://raw.githubusercontent.com/${REPO}/main/README.md`);
+      if (!res.ok) throw new Error("README not found");
       const text = await res.text();
-      document.getElementById("readme").innerHTML = marked.parse(text);
+      body.innerHTML = marked.parse(text);
+    } catch (err) {
+      document.getElementById("about").style.display = "none";
     }
-    loadReadme();
+  }
 
-    async function fetchDir(path) {
-      const api = `https://api.github.com/repos/A-group-of-modders/A.G.O.M-Maven/contents/${path}`;
-      const res = await fetch(api);
-      return res.json();
-    }
+  async function fetchDir(path) {
+    const api = `https://api.github.com/repos/${REPO}/contents/${path}`;
+    const res = await fetch(api);
+    if (!res.ok) throw new Error("Unable to load " + path);
+    return res.json();
+  }
 
-    function createFolder(name) {
-      const div = document.createElement("div");
-      div.className = "folder";
-      div.textContent = name;
-      div.onclick = () => {
-        const next = div.nextElementSibling;
-        next.classList.toggle("active");
-      };
-      return div;
-    }
+  function makeChevron() {
+    const span = document.createElement("span");
+    span.className = "chevron";
+    span.textContent = "▸";
+    return span;
+  }
 
-    function createNested() {
-      const div = document.createElement("div");
-      div.className = "nested";
-      return div;
-    }
+  function makeFolderIcon() {
+    const span = document.createElement("span");
+    span.className = "folder-icon";
+    span.innerHTML =
+      '<svg viewBox="0 0 20 16" fill="currentColor" aria-hidden="true">' +
+      '<path d="M1.5 3.2c0-1 .8-1.7 1.7-1.7h3.6c.4 0 .8.2 1 .5l1 1.3h8c1 0 1.7.8 1.7 1.7v8.3c0 1-.8 1.7-1.7 1.7H3.2c-1 0-1.7-.8-1.7-1.7V3.2z"/>' +
+      "</svg>";
+    return span;
+  }
 
-    function createGradleSnippet(group, artifact, version) {
-      const container = document.createElement("div");
+  function createGradleSnippet(group, artifact, version) {
+    const wrap = document.createElement("div");
+    wrap.className = "snippet-wrap";
 
-      const snippet =
+    const groovy =
 `repositories {
-    maven {
-        url = uri("https://a-group-of-modders.github.io/A.G.O.M-Maven")
-    }
-    mavenCentral()
+  maven {
+      url "${GH_PAGES_URL}"
+  }
+  mavenCentral()
 }
 
 dependencies {
-    implementation "${group}:${artifact}:${version}"
+  implementation "${group}:${artifact}:${version}"
 }`;
 
-      const pre = document.createElement("pre");
-      pre.textContent = snippet;
+    const kotlin =
+`repositories {
+  maven {
+      url = uri("${GH_PAGES_URL}")
+  }
+  mavenCentral()
+}
 
-      const button = document.createElement("button");
-      button.textContent = "Copy to clipboard";
-      button.onclick = () => {
-        navigator.clipboard.writeText(snippet);
-        button.textContent = "Copied!";
-        setTimeout(() => button.textContent = "Copy to clipboard", 1500);
+dependencies {
+  implementation("${group}:${artifact}:${version}")
+}`;
+
+    const variants = [
+      { label: "build.gradle", code: groovy },
+      { label: "build.gradle.kts", code: kotlin },
+    ];
+    let active = 0;
+
+    const tabs = document.createElement("div");
+    tabs.className = "snippet-tabs";
+
+    const pre = document.createElement("pre");
+    pre.className = "snippet";
+    pre.textContent = variants[active].code;
+
+    const button = document.createElement("button");
+    button.className = "copy-btn";
+    button.type = "button";
+    button.textContent = "Copy";
+    button.onclick = (e) => {
+      e.stopPropagation();
+      navigator.clipboard.writeText(variants[active].code);
+      button.textContent = "Copied";
+      setTimeout(() => (button.textContent = "Copy"), 1500);
+    };
+
+    variants.forEach((variant, i) => {
+      const tab = document.createElement("button");
+      tab.type = "button";
+      tab.className = "snippet-tab" + (i === active ? " active" : "");
+      tab.textContent = variant.label;
+      tab.onclick = (e) => {
+        e.stopPropagation();
+        active = i;
+        pre.textContent = variants[active].code;
+        Array.from(tabs.children).forEach((t, ti) => {
+          t.classList.toggle("active", ti === i);
+        });
       };
-
-      container.appendChild(pre);
-      container.appendChild(button);
-      return container;
-    }
-
-    async function buildTree(path, container, depth = 0) {
-      const items = await fetchDir(path);
-      const dirs = items.filter(i => i.type === "dir");
-
-      dirs.sort((a, b) => a.name.localeCompare(b.name, undefined, { numeric: true }));
-
-      for (let i = 0; i < dirs.length; i++) {
-        const dir = dirs[i];
-        const folder = createFolder(dir.name);
-        const nested = createNested();
-
-        if (depth === 2 && i === dirs.length - 1) {
-          const badge = document.createElement("span");
-          badge.className = "badge";
-          badge.textContent = "latest";
-          folder.appendChild(badge);
-        }
-
-        container.appendChild(folder);
-        container.appendChild(nested);
-
-        if (depth === 2) {
-          nested.appendChild(createGradleSnippet(
-            path.split("/")[0],
-            path.split("/")[1],
-            dir.name
-          ));
-        } else {
-          await buildTree(path + "/" + dir.name, nested, depth + 1);
-        }
-      }
-    }
-
-    buildTree("", document.getElementById("repo"));
-
-    document.getElementById("search").addEventListener("input", function() {
-      const term = this.value.toLowerCase();
-      const folders = document.querySelectorAll(".folder");
-
-      folders.forEach(f => {
-        const match = f.textContent.toLowerCase().includes(term);
-        f.style.display = match ? "" : "none";
-        const nested = f.nextElementSibling;
-        if (!match) nested.style.display = "none";
-      });
+      tabs.appendChild(tab);
     });
 
-    // Dark mode toggle
-    const toggle = document.getElementById("themeToggle");
-    toggle.onclick = () => {
-      document.body.classList.toggle("dark");
-      toggle.textContent = document.body.classList.contains("dark")
-        ? "Light mode"
-        : "Dark mode";
-    };
-  </script>
+    wrap.appendChild(tabs);
+    wrap.appendChild(pre);
+    wrap.appendChild(button);
+
+    return wrap;
+  }
+
+  async function buildTree(path, container, depth) {
+    let items;
+    try {
+      items = await fetchDir(path);
+    } catch (err) {
+      return;
+    }
+    const dirs = items.filter((i) => i.type === "dir");
+    dirs.sort((a, b) => a.name.localeCompare(b.name, undefined, { numeric: true }));
+
+    for (let i = 0; i < dirs.length; i++) {
+      const dir = dirs[i];
+      const isLast = i === dirs.length - 1;
+
+      const node = document.createElement("div");
+      node.className = "tree-node";
+
+      const row = document.createElement("div");
+      row.className = "tree-row";
+      row.tabIndex = 0;
+      row.appendChild(makeChevron());
+      row.appendChild(makeFolderIcon());
+
+      const label = document.createElement("span");
+      label.className = "tree-label";
+      label.textContent = dir.name;
+      row.appendChild(label);
+
+      if (depth === 2 && isLast) {
+        const badge = document.createElement("span");
+        badge.className = "badge";
+        badge.textContent = "latest";
+        row.appendChild(badge);
+      }
+
+      const nested = document.createElement("div");
+      nested.className = "tree-children";
+
+      const toggle = () => {
+        row.classList.toggle("open");
+        nested.classList.toggle("active");
+      };
+      row.onclick = toggle;
+      row.onkeydown = (e) => {
+        if (e.key === "Enter" || e.key === " ") {
+          e.preventDefault();
+          toggle();
+        }
+      };
+
+      node.appendChild(row);
+      node.appendChild(nested);
+      container.appendChild(node);
+
+      if (depth === 2) {
+        nested.appendChild(
+          createGradleSnippet(path.split("/")[0], path.split("/")[1], dir.name)
+        );
+      } else {
+        await buildTree(path + "/" + dir.name, nested, depth + 1);
+      }
+    }
+  }
+
+  function filterNode(node, term) {
+    const label = node.querySelector(":scope > .tree-row .tree-label");
+    const ownMatch = !term || (label && label.textContent.toLowerCase().includes(term));
+    const childWrap = node.querySelector(":scope > .tree-children");
+    const childNodes = childWrap ? Array.from(childWrap.children) : [];
+
+    let childMatch = false;
+    childNodes.forEach((child) => {
+      if (filterNode(child, term)) childMatch = true;
+    });
+
+    const show = ownMatch || childMatch;
+    node.style.display = show ? "" : "none";
+
+    if (term && childMatch) {
+      const row = node.querySelector(":scope > .tree-row");
+      row.classList.add("open");
+      childWrap.classList.add("active");
+    }
+    return show;
+  }
+
+  document.getElementById("search").addEventListener("input", function () {
+    const term = this.value.toLowerCase().trim();
+    const repoEl = document.getElementById("repo");
+    Array.from(repoEl.children).forEach((node) => {
+      if (node.id === "loading") return;
+      filterNode(node, term);
+    });
+  });
+
+  function applyTheme(dark) {
+    document.body.classList.toggle("dark", dark);
+  }
+  function initTheme() {
+    const saved = localStorage.getItem("agom-theme");
+    if (saved) {
+      applyTheme(saved === "dark");
+    } else {
+      applyTheme(window.matchMedia("(prefers-color-scheme: dark)").matches);
+    }
+  }
+  initTheme();
+  document.getElementById("themeToggle").onclick = () => {
+    const isDark = !document.body.classList.contains("dark");
+    applyTheme(isDark);
+    localStorage.setItem("agom-theme", isDark ? "dark" : "light");
+  };
+
+  async function init() {
+    await loadReadme();
+    const repoEl = document.getElementById("repo");
+    await buildTree("", repoEl, 0);
+    const loading = document.getElementById("loading");
+    if (loading) loading.remove();
+  }
+  init();
+</script>
 </body>
 </html>
