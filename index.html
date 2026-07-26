@@ -500,7 +500,7 @@ dependencies {
     return wrap;
   }
 
-  async function buildTree(path, container, depth) {
+  async function buildTree(path, container) {
     let items;
     try {
       items = await fetchDir(path);
@@ -509,6 +509,14 @@ dependencies {
     }
     const dirs = items.filter((i) => i.type === "dir");
     dirs.sort((a, b) => a.name.localeCompare(b.name, undefined, { numeric: true }));
+
+    // A real Maven artifact folder always ships maven-metadata.xml
+    // alongside its version subfolders. That's a much more reliable
+    // signal than counting path segments, since groupIds can be any
+    // number of dot-separated folders deep (e.g. com/mrmodder/...).
+    const isArtifactLevel = items.some(
+      (i) => i.type === "file" && i.name === "maven-metadata.xml"
+    );
 
     for (let i = 0; i < dirs.length; i++) {
       const dir = dirs[i];
@@ -528,7 +536,7 @@ dependencies {
       label.textContent = dir.name;
       row.appendChild(label);
 
-      if (depth === 2 && isLast) {
+      if (isArtifactLevel && isLast) {
         const badge = document.createElement("span");
         badge.className = "badge";
         badge.textContent = "latest";
@@ -554,32 +562,40 @@ dependencies {
       node.appendChild(nested);
       container.appendChild(node);
 
-      if (depth === 2) {
-        nested.appendChild(
-          createGradleSnippet(path.split("/")[0], path.split("/")[1], dir.name)
-        );
+      if (isArtifactLevel) {
+        const segments = path.split("/").filter(Boolean);
+        const artifact = segments[segments.length - 1];
+        const group = segments.slice(0, -1).join(".");
+        nested.appendChild(createGradleSnippet(group, artifact, dir.name));
       } else {
-        await buildTree(path + "/" + dir.name, nested, depth + 1);
+        const childPath = path ? path + "/" + dir.name : dir.name;
+        await buildTree(childPath, nested);
       }
     }
   }
 
-  function filterNode(node, term) {
-    const label = node.querySelector(":scope > .tree-row .tree-label");
-    const ownMatch = !term || (label && label.textContent.toLowerCase().includes(term));
+  function filterNode(node, term, forceShow) {
+    const row = node.querySelector(":scope > .tree-row");
+    const label = row ? row.querySelector(".tree-label") : null;
+    const selfMatch = forceShow || !term || (label && label.textContent.toLowerCase().includes(term));
+
     const childWrap = node.querySelector(":scope > .tree-children");
     const childNodes = childWrap ? Array.from(childWrap.children) : [];
+    const hasTreeChildren = childNodes.some((c) => c.classList.contains("tree-node"));
 
+    // once a group/artifact matches, every version underneath it should
+    // stay visible too, even though the version number itself won't match
     let childMatch = false;
     childNodes.forEach((child) => {
-      if (filterNode(child, term)) childMatch = true;
+      if (filterNode(child, term, selfMatch)) childMatch = true;
     });
 
-    const show = ownMatch || childMatch;
+    const show = selfMatch || childMatch;
     node.style.display = show ? "" : "none";
 
-    if (term && childMatch) {
-      const row = node.querySelector(":scope > .tree-row");
+    // expand down to reveal matching versions, but don't auto-pop the
+    // gradle snippet open for every one of them
+    if (term && show && hasTreeChildren) {
       row.classList.add("open");
       childWrap.classList.add("active");
     }
@@ -591,7 +607,7 @@ dependencies {
     const repoEl = document.getElementById("repo");
     Array.from(repoEl.children).forEach((node) => {
       if (node.id === "loading") return;
-      filterNode(node, term);
+      filterNode(node, term, false);
     });
   });
 
@@ -616,7 +632,7 @@ dependencies {
   async function init() {
     await loadReadme();
     const repoEl = document.getElementById("repo");
-    await buildTree("", repoEl, 0);
+    await buildTree("", repoEl);
     const loading = document.getElementById("loading");
     if (loading) loading.remove();
   }
