@@ -1,0 +1,63 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="AutoImportSettings">
+    <option name="autoReloadType" value="SELECTIVE" />
+  </component>
+  <component name="ChangeListManager">
+    <list default="true" id="ed82422e-0fd3-4172-8038-8b6b0fed62e5" name="Changes" comment="">
+      <change beforePath="$PROJECT_DIR$/com/mrmodder/YetAnotherModLibrary/maven-metadata.xml" beforeDir="false" afterPath="$PROJECT_DIR$/com/mrmodder/YetAnotherModLibrary/maven-metadata.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/com/mrmodder/YetAnotherModLibrary/maven-metadata.xml.md5" beforeDir="false" afterPath="$PROJECT_DIR$/com/mrmodder/YetAnotherModLibrary/maven-metadata.xml.md5" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/com/mrmodder/YetAnotherModLibrary/maven-metadata.xml.sha1" beforeDir="false" afterPath="$PROJECT_DIR$/com/mrmodder/YetAnotherModLibrary/maven-metadata.xml.sha1" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/com/mrmodder/YetAnotherModLibrary/maven-metadata.xml.sha256" beforeDir="false" afterPath="$PROJECT_DIR$/com/mrmodder/YetAnotherModLibrary/maven-metadata.xml.sha256" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/com/mrmodder/YetAnotherModLibrary/maven-metadata.xml.sha512" beforeDir="false" afterPath="$PROJECT_DIR$/com/mrmodder/YetAnotherModLibrary/maven-metadata.xml.sha512" afterDir="false" />
+    </list>
+    <option name="SHOW_DIALOG" value="false" />
+    <option name="HIGHLIGHT_CONFLICTS" value="true" />
+    <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
+    <option name="LAST_RESOLUTION" value="IGNORE" />
+  </component>
+  <component name="Git.Settings">
+    <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$" />
+  </component>
+  <component name="GitHubPullRequestSearchHistory">{
+  &quot;lastFilter&quot;: {
+    &quot;state&quot;: &quot;OPEN&quot;,
+    &quot;assignee&quot;: &quot;Mrmodder675&quot;
+  }
+}</component>
+  <component name="GithubPullRequestsUISettings">{
+  &quot;selectedUrlAndAccountId&quot;: {
+    &quot;url&quot;: &quot;https://github.com/A-group-of-modders/A.G.O.M-Maven.git&quot;,
+    &quot;accountId&quot;: &quot;d2833a3d-9d31-4930-ade3-72760246d57f&quot;
+  }
+}</component>
+  <component name="ProjectColorInfo">{
+  &quot;associatedIndex&quot;: 5
+}</component>
+  <component name="ProjectId" id="3GHJdS4z0yJ2r5HGHolnHiaSbyy" />
+  <component name="ProjectViewState">
+    <option name="showLibraryContents" value="true" />
+  </component>
+  <component name="PropertiesComponent"><![CDATA[{
+  "keyToString": {
+    "ModuleVcsDetector.initialDetectionPerformed": "true",
+    "RunOnceActivity.ShowReadmeOnStart": "true",
+    "RunOnceActivity.TerminalTabsStorage.copyFrom.TerminalArrangementManager.252": "true",
+    "RunOnceActivity.git.unshallow": "true",
+    "git-widget-placeholder": "main",
+    "ignore.virus.scanning.warn.message": "true",
+    "kotlin-language-version-configured": "true",
+    "last_opened_file_path": "C:/Users/Hadden/IdeaProjects/A.G.O.M-Maven"
+  }
+}]]></component>
+  <component name="TaskManager">
+    <task active="true" id="Default" summary="Default task">
+      <changelist id="ed82422e-0fd3-4172-8038-8b6b0fed62e5" name="Changes" comment="" />
+      <created>1783622647127</created>
+      <option name="number" value="Default" />
+      <option name="presentableId" value="Default" />
+      <updated>1783622647127</updated>
+    </task>
+    <servers />
+  </component>
+</project>
